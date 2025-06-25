@@ -1,0 +1,139 @@
+sidebar {
+    transition: all 0.3s ease;
+    z-index: 50; /* Garante que a sidebar fique acima do conteúdo principal */
+}
+
+/* Estado "colapsado" da sidebar em telas grandes (desktop) */
+@media (min-width: 768px) { /* A partir do breakpoint 'md' do Tailwind */
+    .sidebar.collapsed {
+        width: 70px; /* Largura reduzida para mostrar apenas ícones */
+    }
+    .sidebar.collapsed .sidebar-text {
+        display: none; /* Esconde o texto dos links e títulos de seção */
+        opacity: 0;
+        transition: opacity 0.1s ease;
+    }
+    .sidebar.collapsed .logo-text {
+        display: none; /* Esconde o texto do logo */
+        opacity: 0;
+        transition: opacity 0.1s ease;
+    }
+    .sidebar.collapsed .logo-icon {
+        display: block !important; /* Garante que o ícone do logo seja sempre visível e centralizado */
+        margin: 0 auto;
+    }
+    /* Ajusta o alinhamento dos ícones dos links quando a sidebar está colapsada */
+    .sidebar.collapsed nav a {
+        justify-content: center; /* Centraliza o ícone */
+        padding-left: 0;
+        padding-right: 0;
+    }
+    /* Quando a sidebar está colapsada no desktop, empurra o conteúdo principal */
+    .sidebar.collapsed + .flex-1 { /* Ajustado para afetar o div flex-1 que é o main content */
+        margin-left: 70px; /* Cria espaço para a sidebar colapsada */
+    }
+}
+
+/* Estado da sidebar em telas pequenas (mobile) */
+@media (max-width: 767px) { /* Abaixo do breakpoint 'md' do Tailwind */
+    .sidebar {
+        transform: translateX(-100%); /* Esconde a sidebar completamente no mobile por padrão */
+        position: fixed; /* Garante que ela se sobreponha ao conteúdo */
+        height: 100vh; /* Ocupa a altura total da viewport */
+        width: 256px; /* Largura total quando aberta */
+        transition: transform 0.3s ease; /* Transição para o movimento da sidebar */
+    }
+    /* Quando a sidebar NÃO está colapsada (ou seja, está aberta no mobile) */
+    .sidebar:not(.collapsed) {
+        transform: translateX(0); /* Mostra a sidebar */
+    }
+
+    /* Estilos para o texto da sidebar (logo e links) em mobile */
+    .sidebar .sidebar-text,
+    .sidebar .logo-text {
+        display: block; /* Garante que o texto seja um bloco */
+        opacity: 1; /* Torna o texto visível por padrão quando a sidebar está aberta */
+        transition: opacity 0.3s ease; /* Transição para a opacidade */
+        pointer-events: auto; /* Permite interações por padrão */
+    }
+
+    /* Quando a sidebar está COLAPSADA (escondida) em mobile, esconde o texto */
+    .sidebar.collapsed .sidebar-text,
+    .sidebar.collapsed .logo-text {
+        opacity: 0; /* Esconde o texto */
+        pointer-events: none; /* Impede interações */
+    }
+
+    /* No mobile, o conteúdo principal não é empurrado pela sidebar */
+    .flex-1 { /* Main content area */
+        margin-left: 0; /* Não há push da sidebar */
+    }
+
+    /* Overlay para quando a sidebar está aberta no mobile */
+    body.sidebar-open::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 40; /* Abaixo da sidebar, acima do conteúdo */
+    }
+
+    /* Ajustes específicos para elementos em smartphones (mantidos) */
+    .chart-container {
+        height: auto; /* Remove altura fixa para gráficos em mobile */
+        min-height: 250px; /* Garante uma altura mínima para o gráfico */
+        max-height: 60vh; /* Limita a altura do gráfico para não ocupar a tela toda */
+    }
+
+    /* Ajusta o padding dos cards de conteúdo para serem menos espaçados em telas pequenas */
+    .bg-white.p-6 {
+        padding: 1rem; /* Reduz o padding de 1.5rem para 1rem em mobile */
+    }
+
+    /* Ajusta o tamanho da fonte para títulos em telas pequenas se necessário */
+    h2.text-2xl {
+        font-size: 1.5rem; /* Reduz de 2rem para 1.5rem em mobile */
+    }
+    h3.text-xl {
+        font-size: 1.25rem; /* Reduz de 1.25rem para 1.125rem em mobile */
+    }
+}
+
+/* Estilo padrão para o contêiner do gráfico (para desktop) */
+.chart-container {
+    height: 300px;
+    position: relative;
+}
+
+.equipment-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 9999px;
+}
+
+/* Nova classe para o link de navegação ativo */
+.active-nav-link {
+    background-color: rgba(255, 255, 255, 0.2); /* Um fundo mais claro para indicar ativo */
+    font-weight: bold;
+}
+
+/* Estilo para o contêiner do leitor de QR Code para garantir responsividade */
+#reader {
+    width: 100%; /* Ocupa a largura total do contêiner pai */
+    max-width: 500px; /* Limita a largura máxima para não ficar muito grande em desktops */
+    height: auto; /* Ajusta a altura automaticamente */
+    /* Adiciona um aspect-ratio para manter a proporção do vídeo */
+    aspect-ratio: 4 / 3; /* Proporção comum de vídeo (largura / altura) */
+    overflow: hidden; /* Garante que o conteúdo não vaze */
+}

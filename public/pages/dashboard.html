@@ -1,0 +1,458 @@
+<!-- Conteúdo específico da página de Dashboard -->
+<!-- Observação: Chart.js será carregado dinamicamente pelo codigo.js -->
+
+<div class="mb-8">
+    <h2 class="text-3xl font-bold text-gray-800 mb-4">Visão Geral da Manutenção</h2>
+    <p class="text-gray-600">Acompanhe as principais métricas e o status da sua operação.</p>
+</div>
+
+<!-- Grid de Cards de Métricas -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+    <!-- Card: Equipamentos Ativos (Não clicável) -->
+    <div class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
+        <div>
+            <p class="text-gray-500 text-sm">Equipamentos Ativos</p>
+            <p class="text-3xl font-bold text-gray-900" id="totalEquipamentosAtivos">0</p>
+        </div>
+        <i class="fas fa-check-circle text-green-500 text-4xl"></i>
+    </div>
+
+    <!-- Card-Botão: Ordens Abertas (Em Andamento) -->
+    <button class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between hover:shadow-lg transition-shadow cursor-pointer" data-role="show-inprogress-orders">
+        <div>
+            <p class="text-gray-500 text-sm">Ordens Abertas (Em Andamento)</p>
+            <p class="text-3xl font-bold text-gray-900" id="totalOrdensAbertas">0</p>
+        </div>
+        <i class="fas fa-tasks text-blue-500 text-4xl"></i>
+    </button>
+
+    <!-- Card-Botão: Manutenções Pendentes (Toda a Fila) -->
+    <button class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between hover:shadow-lg transition-shadow cursor-pointer" data-role="show-pending-maintenance">
+        <div>
+            <p class="text-gray-500 text-sm">Fila de Manutenção</p>
+            <p class="text-3xl font-bold text-gray-900" id="totalManutencoesPendentes">0</p>
+        </div>
+        <i class="fas fa-exclamation-triangle text-yellow-500 text-4xl"></i>
+    </button>
+
+    <!-- Card-Botão: Mecânicos Ativos -->
+    <button class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between hover:shadow-lg transition-shadow cursor-pointer" data-role="show-active-tecnicos" data-especialidade="Mecânico">
+        <div>
+            <p class="text-gray-500 text-sm">Mecânicos Ativos</p>
+            <p class="text-3xl font-bold text-gray-900" id="mecanicosDisponiveis">0</p>
+        </div>
+        <i class="fas fa-user-gear text-purple-500 text-4xl"></i>
+    </button>
+
+    <!-- Card-Botão: Eletricistas Ativos -->
+    <button class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between hover:shadow-lg transition-shadow cursor-pointer" data-role="show-active-tecnicos" data-especialidade="Eletricista">
+        <div>
+            <p class="text-gray-500 text-sm">Eletricistas Ativos</p>
+            <p class="text-3xl font-bold text-gray-900" id="eletricistasDisponiveis">0</p>
+        </div>
+        <i class="fas fa-bolt text-orange-500 text-4xl"></i>
+    </button>
+    
+    <!-- OS Fechadas Hoje -->
+    <div class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
+        <div>
+            <p class="text-sm text-gray-500">OS Fechadas Hoje</p>
+            <p class="text-3xl font-bold text-gray-900" id="chamadosFechadosHoje">0</p>
+        </div>
+        <i class="fas fa-clipboard-check text-teal-500 text-4xl"></i>
+    </div>
+</div>
+
+<!-- ========================================================== -->
+<!-- SEÇÃO DE GRÁFICOS RESTAURADA -->
+<!-- ========================================================== -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold mb-4 text-gray-800">Manutenções por Tipo e Mês</h2>
+        <div class="chart-container">
+            <canvas id="maintenanceChart"></canvas>
+        </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold mb-4 text-gray-800">Equipamentos por Setor</h2>
+        <div class="chart-container">
+            <canvas id="equipmentBySectorChart"></canvas>
+        </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold mb-4 text-gray-800">Manutenções por Status</h2>
+        <div class="chart-container">
+            <canvas id="maintenanceStatusChart"></canvas>
+        </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold mb-4 text-gray-800">Top 5 Equipamentos com mais OS</h2>
+        <div class="chart-container">
+            <canvas id="topEquipmentsOSChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================== -->
+<!-- SEÇÃO DE LISTAS RESTAURADA -->
+<!-- ========================================================== -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold mb-4 text-gray-800">Atividades Recentes</h2>
+        <ul class="space-y-4" id="recentActivitiesList">
+            <li class="text-gray-500 text-center">Carregando atividades...</li>
+        </ul>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold mb-4 text-gray-800">Equipamentos Críticos</h2>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Equipamento</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Última Manut.</th>
+                    </tr>
+                </thead>
+                <tbody id="equipamentos-criticos-body" class="bg-white divide-y divide-gray-200">
+                    <tr>
+                        <td colspan="3" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">Carregando equipamentos...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<!-- MODAL UNIFICADO para listar Ordens de Serviço -->
+<div id="maintenanceModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-lg shadow-xl w-11/12 md:w-3/4 lg:w-2/3 p-6 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center border-b pb-3 mb-4">
+            <h3 id="maintenanceModalTitle" class="text-xl font-semibold text-gray-800">Ordens de Serviço</h3>
+            <button id="closeMaintenanceModalButton" class="text-gray-500 hover:text-gray-800 text-2xl font-bold">&times;</button>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID OS</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Equipamento</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prioridade</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data Abertura</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tempo Decorrido</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="maintenanceListBody" class="bg-white divide-y divide-gray-200"></tbody>
+            </table>
+        </div>
+        <button id="closeMaintenanceModalButtonBottom" class="mt-6 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            Fechar
+        </button>
+    </div>
+</div>
+
+<!-- MODAL PARA TÉCNICOS -->
+<div id="tecnicosListModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-lg shadow-xl w-11/12 md:w-3/4 lg:w-1/3 p-6 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center border-b pb-3 mb-4">
+            <h3 class="text-xl font-semibold text-gray-800" id="tecnicosModalTitle">Técnicos Ativos</h3>
+            <button id="closeTecnicosListModalButton" class="text-gray-500 hover:text-gray-800 text-2xl font-bold">&times;</button>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Especialidade</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contato</th>
+                    </tr>
+                </thead>
+                <tbody id="activeTecnicosListBody" class="bg-white divide-y divide-gray-200"></tbody>
+            </table>
+        </div>
+        <button id="closeTecnicosListModalButtonBottom" class="mt-6 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            Fechar
+        </button>
+    </div>
+</div>
+
+
+<!-- Script específico para a página de Dashboard -->
+<script data-dashboard-logic="true">
+    let activeTimers = {};
+
+    window.initializeDashboardPage = async function() {
+        console.log('Script dashboard.html (initializeDashboardPage) foi executado!');
+
+        // Referências aos elementos do DOM
+        const totalEquipamentosAtivosElement = document.getElementById('totalEquipamentosAtivos');
+        const totalOrdensAbertasElement = document.getElementById('totalOrdensAbertas');
+        const totalManutencoesPendentesElement = document.getElementById('totalManutencoesPendentes');
+        const mecanicosDisponiveisElement = document.getElementById('mecanicosDisponiveis');
+        const eletricistasDisponiveisElement = document.getElementById('eletricistasDisponiveis');
+        const chamadosFechadosHojeElement = document.getElementById('chamadosFechadosHoje');
+        const recentActivitiesList = document.getElementById('recentActivitiesList');
+        const equipamentosCriticosBody = document.getElementById('equipamentos-criticos-body');
+        
+        // Referências ao Modal Unificado
+        const maintenanceModal = document.getElementById('maintenanceModal');
+        const maintenanceModalTitle = document.getElementById('maintenanceModalTitle');
+        const maintenanceListBody = document.getElementById('maintenanceListBody');
+        const closeMaintenanceModalButton = document.getElementById('closeMaintenanceModalButton');
+        const closeMaintenanceModalButtonBottom = document.getElementById('closeMaintenanceModalButtonBottom');
+        
+        // Referências ao Modal de Técnicos
+        const tecnicosListModal = document.getElementById('tecnicosListModal');
+        const tecnicosModalTitle = document.getElementById('tecnicosModalTitle');
+        const activeTecnicosListBody = document.getElementById('activeTecnicosListBody');
+        const closeTecnicosListModalButton = document.getElementById('closeTecnicosListModalButton');
+        const closeTecnicosListModalButtonBottom = document.getElementById('closeTecnicosListModalButtonBottom');
+
+        let allDashboardMetrics = {};
+
+        async function loadAllDashboardMetrics() {
+             try {
+                const response = await fetch('http://localhost:3000/api/dashboard-metrics');
+                if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
+                allDashboardMetrics = await response.json();
+                
+                totalEquipamentosAtivosElement.textContent = allDashboardMetrics.totalEquipamentosAtivos || 0;
+                totalOrdensAbertasElement.textContent = allDashboardMetrics.totalOrdensAbertas || 0;
+                totalManutencoesPendentesElement.textContent = allDashboardMetrics.totalManutencoesPendentes || 0;
+                mecanicosDisponiveisElement.textContent = allDashboardMetrics.mecanicosAtivos || 0;
+                eletricistasDisponiveisElement.textContent = allDashboardMetrics.eletricistasAtivos || 0;
+                chamadosFechadosHojeElement.textContent = allDashboardMetrics.chamadosFechadosHoje || 0;
+                
+                if(typeof window.loadEquipamentosCriticos === 'function') window.loadEquipamentosCriticos(allDashboardMetrics.equipamentos);
+                if(typeof window.loadRecentActivities === 'function') window.loadRecentActivities(allDashboardMetrics.recentActivities);
+                if(typeof window.initializeCharts === 'function') window.initializeCharts(allDashboardMetrics);
+
+             } catch (error) {
+                 console.error("Erro ao carregar métricas:", error);
+             }
+        }
+        
+        window.loadEquipamentosCriticos = function(equipamentos) { 
+            if (!equipamentosCriticosBody) return;
+            equipamentosCriticosBody.innerHTML = '';
+            const equipamentosCriticos = (equipamentos || []).filter(e => e.status === 'Em Manutenção' || e.status === 'Inativo');
+            if (equipamentosCriticos.length > 0) {
+                equipamentosCriticos.forEach(equipamento => {
+                    const ultimaManutencaoData = equipamento.ultima_manutencao ? new Date(equipamento.ultima_manutencao).toLocaleDateString('pt-BR') : 'N/A';
+                    const row = `<tr><td class="px-6 py-4">${equipamento.nome}</td><td class="px-6 py-4">${equipamento.status}</td><td class="px-6 py-4">${ultimaManutencaoData}</td></tr>`;
+                    equipamentosCriticosBody.insertAdjacentHTML('beforeend', row);
+                });
+            } else {
+                equipamentosCriticosBody.innerHTML = `<tr><td colspan="3" class="px-6 py-4 text-center">Nenhum equipamento crítico encontrado.</td></tr>`;
+            }
+        };
+
+        window.loadRecentActivities = function(activities) {
+            if (!recentActivitiesList) return;
+            recentActivitiesList.innerHTML = '';
+            if ((activities || []).length > 0) {
+                activities.forEach(activity => {
+                    const activityDate = new Date(activity.date).toLocaleString('pt-BR');
+                    const item = `<li class="flex items-center space-x-3"><div><p class="text-gray-800">${activity.description}</p><p class="text-gray-500 text-sm">${activityDate} por ${activity.responsible || 'Sistema'}</p></div></li>`;
+                    recentActivitiesList.insertAdjacentHTML('beforeend', item);
+                });
+            } else {
+                recentActivitiesList.innerHTML = `<li class="text-center">Nenhuma atividade recente.</li>`;
+            }
+        };
+        
+        window.showActiveTecnicosModal = async function(especialidade) { 
+            if (!tecnicosListModal) return;
+            tecnicosModalTitle.textContent = `${especialidade}s Ativos`;
+            activeTecnicosListBody.innerHTML = `<tr><td colspan="4" class="px-4 py-2 text-center text-gray-500">Carregando...</td></tr>`;
+            tecnicosListModal.classList.remove('hidden');
+
+            try {
+                const tecnicos = allDashboardMetrics.tecnicos || [];
+                const tecnicosFiltrados = tecnicos.filter(t => t.status === 'Ativo' && t.especialidade === especialidade);
+                
+                activeTecnicosListBody.innerHTML = '';
+                if (tecnicosFiltrados.length > 0) {
+                    tecnicosFiltrados.forEach(tecnico => {
+                        const row = `<tr><td class="px-4 py-2">${tecnico.id}</td><td class="px-4 py-2">${tecnico.nome}</td><td class="px-4 py-2">${tecnico.especialidade}</td><td class="px-4 py-2">${tecnico.contato || 'N/A'}</td></tr>`;
+                        activeTecnicosListBody.insertAdjacentHTML('beforeend', row);
+                    });
+                } else {
+                     activeTecnicosListBody.innerHTML = `<tr><td colspan="4" class="px-4 py-2 text-center">Nenhum ${especialidade.toLowerCase()} ativo.</td></tr>`;
+                }
+            } catch (error) {
+                console.error('Erro ao mostrar modal de técnicos:', error);
+                activeTecnicosListBody.innerHTML = `<tr><td colspan="4" class="px-4 py-2 text-center text-red-500">Erro ao carregar.</td></tr>`;
+            }
+        };
+
+        async function showMaintenanceModal(filter = null) {
+            for (const timerId in activeTimers) {
+                clearInterval(activeTimers[timerId]);
+                delete activeTimers[timerId];
+            }
+            
+            maintenanceListBody.innerHTML = `<tr><td colspan="7" class="px-4 py-2 text-center text-gray-500">Carregando...</td></tr>`;
+            
+            maintenanceModalTitle.textContent = filter === 'Em Andamento' ? 'Ordens de Serviço em Andamento' : 'Fila de Manutenção';
+            
+            maintenanceModal.classList.remove('hidden');
+
+            try {
+                const response = await fetch('http://localhost:3000/api/ordens-servico');
+                if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
+                let ordensServico = await response.json();
+
+                let filteredOrders = filter === 'Em Andamento' 
+                    ? ordensServico.filter(os => os.status === 'Em Andamento')
+                    : ordensServico.filter(os => os.status === 'Pendente' || os.status === 'Em Andamento');
+                
+                maintenanceListBody.innerHTML = '';
+
+                if (filteredOrders.length > 0) {
+                    filteredOrders.forEach(os => {
+                        const dataAberturaFormatada = new Date(os.data_abertura).toLocaleDateString('pt-BR');
+                        const acceptButtonHtml = os.status === 'Pendente' ? 
+                            `<button class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded-full text-xs accept-order-button" data-os-id="${os.id}">Aceitar</button>` : '';
+
+                        const row = `
+                            <tr id="os-row-${os.id}">
+                                <td class="px-4 py-2 font-medium">${os.id}</td>
+                                <td class="px-4 py-2">${os.equipamento_nome || 'N/A'}</td>
+                                <td class="px-4 py-2">${os.prioridade}</td>
+                                <td class="px-4 py-2 status-cell">${os.status}</td>
+                                <td class="px-4 py-2">${dataAberturaFormatada}</td>
+                                <td class="px-4 py-2 font-mono" id="timer-${os.id}">--:--:--</td>
+                                <td class="px-4 py-2 action-cell">${acceptButtonHtml}</td>
+                            </tr>
+                        `;
+                        maintenanceListBody.insertAdjacentHTML('beforeend', row);
+
+                        if (os.status === 'Em Andamento' && os.data_aceite) {
+                            startOrUpdateOrderTimer(os);
+                        }
+                    });
+
+                    document.querySelectorAll('.accept-order-button').forEach(button => {
+                        button.addEventListener('click', async function() {
+                            await acceptOrder(this.dataset.osId);
+                        });
+                    });
+                } else {
+                    maintenanceListBody.innerHTML = `<tr><td colspan="7" class="px-4 py-2 text-center text-gray-500">Nenhuma ordem encontrada.</td></tr>`;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar ordens de serviço:', error);
+                maintenanceListBody.innerHTML = `<tr><td colspan="7" class="px-4 py-2 text-center text-red-500">Erro ao carregar lista.</td></tr>`;
+            }
+        }
+        
+        async function acceptOrder(osId) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/ordens-servico/${osId}`);
+                if (!response.ok) throw new Error(`Erro ao buscar OS ${osId}`);
+                const osDetails = await response.json();
+
+                const updatePayload = {
+                    ...osDetails,
+                    status: 'Em Andamento',
+                    data_aceite: new Date().toISOString().slice(0, 19).replace('T', ' ')
+                };
+                delete updatePayload.data_abertura;
+                delete updatePayload.data_conclusao;
+                delete updatePayload.data_prev_conclusao;
+
+                const updateResponse = await fetch(`http://localhost:3000/api/ordens-servico/${osId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatePayload)
+                });
+
+                if (updateResponse.ok) {
+                    alert('Ordem de serviço aceita!');
+                    
+                    const rowToUpdate = document.getElementById(`os-row-${osId}`);
+                    if (rowToUpdate) {
+                        const statusCell = rowToUpdate.querySelector('.status-cell');
+                        if (statusCell) statusCell.textContent = 'Em Andamento';
+                        const actionCell = rowToUpdate.querySelector('.action-cell');
+                        if (actionCell) actionCell.innerHTML = '';
+                        startOrUpdateOrderTimer(updatePayload);
+                    }
+                    
+                    await loadAllDashboardMetrics();
+                } else {
+                    const errorData = await updateResponse.json();
+                    alert(`Erro ao aceitar ordem de serviço: ${errorData.message}`);
+                }
+            } catch (error) {
+                console.error('Erro na requisição para aceitar OS:', error);
+                alert('Erro ao conectar com o servidor para aceitar a OS.');
+            }
+        }
+
+        function startOrUpdateOrderTimer(os) {
+            const timerElementId = `timer-${os.id}`;
+            if (activeTimers[timerElementId]) clearInterval(activeTimers[timerElementId]);
+            
+            const timerElement = document.getElementById(timerElementId);
+            if (!timerElement || !os.data_aceite) {
+                if(timerElement) timerElement.textContent = "Aguardando...";
+                return;
+            }
+            const acceptedDate = new Date(os.data_aceite);
+            
+            const updateTimerDisplay = () => {
+                const now = new Date();
+                const diffMs = now.getTime() - acceptedDate.getTime();
+                const seconds = Math.floor((diffMs / 1000) % 60);
+                const minutes = Math.floor((diffMs / (1000 * 60)) % 60);
+                const hours = Math.floor(diffMs / (1000 * 60 * 60));
+                timerElement.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            };
+            updateTimerDisplay();
+            activeTimers[timerElementId] = setInterval(updateTimerDisplay, 1000);
+        }
+        
+        // Listeners dos Cards
+        document.querySelector('[data-role="show-pending-maintenance"]').addEventListener('click', () => showMaintenanceModal());
+        document.querySelector('[data-role="show-inprogress-orders"]').addEventListener('click', () => showMaintenanceModal('Em Andamento'));
+        document.querySelectorAll('[data-role="show-active-tecnicos"]').forEach(button => {
+            button.addEventListener('click', function() {
+                window.showActiveTecnicosModal(this.dataset.especialidade);
+            });
+        });
+
+        // Listeners para fechar o modal de manutenção
+        [closeMaintenanceModalButton, closeMaintenanceModalButtonBottom].forEach(btn => btn.addEventListener('click', () => {
+            maintenanceModal.classList.add('hidden');
+            for (const timerId in activeTimers) { clearInterval(activeTimers[timerId]); }
+        }));
+        maintenanceModal.addEventListener('click', (event) => {
+            if (event.target === maintenanceModal) {
+                maintenanceModal.classList.add('hidden');
+                for (const timerId in activeTimers) { clearInterval(activeTimers[timerId]); }
+            }
+        });
+        
+        // Listeners para fechar o modal de técnicos
+        [closeTecnicosListModalButton, closeTecnicosListModalButtonBottom].forEach(btn => btn.addEventListener('click', () => {
+            tecnicosListModal.classList.add('hidden');
+        }));
+        tecnicosListModal.addEventListener('click', (event) => {
+            if (event.target === tecnicosListModal) {
+                tecnicosListModal.classList.add('hidden');
+            }
+        });
+
+        loadAllDashboardMetrics();
+    };
+</script>

@@ -1,0 +1,259 @@
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-semibold mb-4 text-gray-800">Ordens de Serviço</h2>
+    <p class="text-gray-600">Gerencie as ordens de serviço, desde a criação até a conclusão.</p>
+
+    <div class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <h3 class="text-xl font-semibold mb-3 text-gray-700">Criar Nova Ordem de Serviço</h3>
+        <form id="nova-ordem-servico-form">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="os_equipamento_id" class="block text-gray-700 text-sm font-bold mb-2">Equipamento:</label>
+                    <select id="os_equipamento_id" name="equipamento_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        <option value="">Carregando equipamentos...</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="os_tipo" class="block text-gray-700 text-sm font-bold mb-2">Tipo de OS:</label>
+                    <select id="os_tipo" name="tipo_os" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        <option value="">Selecione um tipo</option>
+                        <option value="Preventiva">Preventiva</option>
+                        <option value="Corretiva">Corretiva</option>
+                        <option value="Melhoria">Melhoria</option>
+                        <option value="Inspeção">Inspeção</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="os_prioridade" class="block text-gray-700 text-sm font-bold mb-2">Prioridade:</label>
+                    <select id="os_prioridade" name="prioridade" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        <option value="Baixa">Baixa</option>
+                        <option value="Média">Média</option>
+                        <option value="Alta">Alta</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="os_tecnico_id" class="block text-gray-700 text-sm font-bold mb-2">Técnico Responsável:</label>
+                    <select id="os_tecnico_id" name="tecnico_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="">Carregando técnicos...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-6">
+                <label for="os_descricao" class="block text-gray-700 text-sm font-bold mb-2">Descrição do Problema/Serviço:</label>
+                <textarea id="os_descricao" name="descricao" rows="3" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Descreva o serviço a ser realizado..." required></textarea>
+            </div>
+            <div class="flex items-center justify-end">
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Criar Ordem de Serviço
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="mt-8">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-semibold text-gray-700">Ordens de Serviço Atuais</h3>
+            <div>
+                <label for="statusFilter" class="text-sm font-medium text-gray-700 mr-2">Filtrar por Status:</label>
+                <select id="statusFilter" class="border-gray-300 rounded-md shadow-sm">
+                    <option value="">Todos</option>
+                    <option value="Pendente">Pendente</option>
+                    <option value="Em Andamento">Em Andamento</option>
+                    <option value="Concluída">Concluída</option>
+                    <option value="Cancelada">Cancelada</option>
+                </select>
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Equipamento</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Técnico</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prioridade</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data de Abertura</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="ordens-servico-list-body" class="bg-white divide-y divide-gray-200">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script data-ordens-servico-logic="true">
+    window.initializeOrdensServicoPage = async function(initialFilterStatus = null) {
+        console.log('Script ordens-servico.html (initializeOrdensServicoPage) foi executado!');
+
+        const novaOrdemServicoForm = document.getElementById('nova-ordem-servico-form');
+        const osEquipamentoIdSelect = document.getElementById('os_equipamento_id');
+        const osTecnicoIdSelect = document.getElementById('os_tecnico_id');
+        const ordensServicoListBody = document.getElementById('ordens-servico-list-body');
+        const statusFilter = document.getElementById('statusFilter');
+        
+        const ordemServicoModal = document.getElementById('ordemServicoModal');
+        const editOrdemServicoForm = document.getElementById('edit-ordem-servico-form');
+
+        async function populateDropdown(url, selectElement, valueField, textField, defaultOptionText) {
+            try {
+                const response = await fetch(url);
+                const items = await response.json();
+                selectElement.innerHTML = `<option value="">${defaultOptionText}</option>`;
+                items.forEach(item => {
+                    const option = new Option(item[textField], item[valueField]);
+                    selectElement.appendChild(option);
+                });
+            } catch (error) {
+                console.error(`Erro ao popular dropdown para ${url}:`, error);
+                selectElement.innerHTML = '<option value="">Erro ao carregar</option>';
+            }
+        }
+        
+        async function loadOrdensServico(filterStatus = null) {
+            let url = 'http://localhost:3000/api/ordens-servico';
+            if (filterStatus) {
+                url += `?status=${encodeURIComponent(filterStatus)}`;
+            }
+            try {
+                const response = await fetch(url);
+                const ordens = await response.json();
+                ordensServicoListBody.innerHTML = '';
+                if (ordens.length > 0) {
+                    ordens.forEach(os => {
+                        const dataAbertura = new Date(os.data_abertura).toLocaleDateString('pt-BR');
+                        const row = `
+                            <tr>
+                                <td class="px-6 py-4">${os.id}</td>
+                                <td class="px-6 py-4">${os.equipamento_nome}</td>
+                                <td class="px-6 py-4">${os.tecnico_nome || 'Não atribuído'}</td>
+                                <td class="px-6 py-4">${os.prioridade}</td>
+                                <td class="px-6 py-4">${os.status}</td>
+                                <td class="px-6 py-4">${dataAbertura}</td>
+                                <td class="px-6 py-4">
+                                    <button class="text-blue-600 hover:text-blue-900 mr-2 edit-os-button" data-os-id="${os.id}">Editar</button>
+                                </td>
+                            </tr>`;
+                        ordensServicoListBody.insertAdjacentHTML('beforeend', row);
+                    });
+                } else {
+                    ordensServicoListBody.innerHTML = '<tr><td colspan="7" class="text-center py-4">Nenhuma ordem de serviço encontrada.</td></tr>';
+                }
+            } catch (error) {
+                console.error("Erro ao carregar Ordens de Serviço:", error);
+                ordensServicoListBody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-red-500">Falha ao carregar dados.</td></tr>';
+            }
+        }
+
+        novaOrdemServicoForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const newOsData = {
+                equipamento_id: document.getElementById('os_equipamento_id').value,
+                tipo_os: document.getElementById('os_tipo').value,
+                descricao: document.getElementById('os_descricao').value,
+                prioridade: document.getElementById('os_prioridade').value, 
+                tecnico_id: document.getElementById('os_tecnico_id').value || null
+            };
+
+            try {
+                const response = await fetch('http://localhost:3000/api/ordens-servico', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newOsData)
+                });
+                const responseData = await response.json();
+                if (response.ok) {
+                    Toastify({ text: "Ordem de Serviço criada com sucesso!", duration: 3000, style: { background: "linear-gradient(to right, #00b09b, #96c93d)" } }).showToast();
+                    novaOrdemServicoForm.reset();
+                    await loadOrdensServico(statusFilter.value || null);
+                } else {
+                    Toastify({ text: 'Erro: ' + responseData.message, duration: 3000, style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" } }).showToast();
+                }
+            } catch (error) {
+                Toastify({ text: 'Erro de conexão ao criar OS.', duration: 3000, style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" } }).showToast();
+            }
+        });
+        
+        statusFilter.addEventListener('change', function() {
+            const selectedStatus = this.value;
+            loadOrdensServico(selectedStatus || null);
+        });
+
+        ordensServicoListBody.addEventListener('click', async function(event) {
+            if (event.target.classList.contains('edit-os-button')) {
+                const osId = event.target.dataset.osId;
+                try {
+                    const response = await fetch(`http://localhost:3000/api/ordens-servico/${osId}`);
+                    const os = await response.json();
+                    
+                    document.getElementById('modalOsId').textContent = os.id;
+                    document.getElementById('edit_os_id').value = os.id;
+                    
+                    const editOsEquipamentoIdSelect = document.getElementById('edit_os_equipamento_id');
+                    const editOsTecnicoIdSelect = document.getElementById('edit_os_tecnico_id');
+
+                    await populateDropdown('http://localhost:3000/api/equipamentos', editOsEquipamentoIdSelect, 'id', 'nome', 'Selecione');
+                    await populateDropdown('http://localhost:3000/api/tecnicos', editOsTecnicoIdSelect, 'id', 'nome', 'Nenhum');
+                    
+                    editOsEquipamentoIdSelect.value = os.equipamento_id;
+                    document.getElementById('edit_os_tipo').value = os.tipo_os;
+                    document.getElementById('edit_os_prioridade').value = os.prioridade;
+                    document.getElementById('edit_os_status').value = os.status;
+                    editOsTecnicoIdSelect.value = os.tecnico_id || '';
+                    document.getElementById('edit_os_descricao').value = os.descricao;
+
+                    ordemServicoModal.classList.remove('hidden');
+                } catch (error) {
+                    console.error("Erro ao abrir modal de edição:", error);
+                    Toastify({ text: 'Não foi possível carregar os dados da OS.', duration: 3000, style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" } }).showToast();
+                }
+            }
+        });
+        
+        editOrdemServicoForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const osId = document.getElementById('edit_os_id').value;
+            const updatedOsData = {
+                equipamento_id: document.getElementById('edit_os_equipamento_id').value,
+                tipo_os: document.getElementById('edit_os_tipo').value,
+                descricao: document.getElementById('edit_os_descricao').value,
+                status: document.getElementById('edit_os_status').value,
+                prioridade: document.getElementById('edit_os_prioridade').value,
+                tecnico_id: document.getElementById('edit_os_tecnico_id').value || null
+            };
+            
+            try {
+                const response = await fetch(`http://localhost:3000/api/ordens-servico/${osId}`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(updatedOsData)
+                });
+                const responseData = await response.json();
+                if(response.ok) {
+                    Toastify({ text: "OS atualizada com sucesso!", duration: 3000, style: { background: "linear-gradient(to right, #00b09b, #96c93d)" } }).showToast();
+                    ordemServicoModal.classList.add('hidden');
+                    await loadOrdensServico(statusFilter.value || null);
+                } else {
+                    Toastify({ text: "Erro: " + responseData.message, duration: 3000, style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" } }).showToast();
+                }
+            } catch (error) {
+                 Toastify({ text: 'Erro de conexão ao atualizar OS.', duration: 3000, style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" } }).showToast();
+            }
+        });
+        
+        document.getElementById('closeOsModalButton').addEventListener('click', () => ordemServicoModal.classList.add('hidden'));
+
+        // Inicialização da página
+        await Promise.all([
+            populateDropdown('http://localhost:3000/api/equipamentos', osEquipamentoIdSelect, 'id', 'nome', 'Selecione um equipamento'),
+            populateDropdown('http://localhost:3000/api/tecnicos', osTecnicoIdSelect, 'id', 'nome', 'Nenhum')
+        ]);
+        if (initialFilterStatus) {
+            statusFilter.value = initialFilterStatus;
+        }
+        await loadOrdensServico(initialFilterStatus);
+    };
+</script>

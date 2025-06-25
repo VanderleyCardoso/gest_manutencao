@@ -1,0 +1,39 @@
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-semibold mb-4 text-gray-800">Configurações do Sistema</h2>
+    </div>
+
+<script data-config-logic="true">
+    window.initializeConfiguracoesPage = async function() {
+        console.log('Script configuracoes.html (initializeConfiguracoesPage) foi executado!');
+
+        const form = document.getElementById('configuracoes-form');
+        if (form) {
+            form.addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                // ... (código de coleta de dados sem alteração) ...
+
+                try {
+                    const response = await fetch('http://localhost:3000/api/configuracoes', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(configData)
+                    });
+
+                    const responseData = await response.json();
+
+                    if (response.ok) {
+                        Toastify({ text: "Configurações salvas com sucesso!", duration: 3000, style: { background: "linear-gradient(to right, #00b09b, #96c93d)" } }).showToast();
+                        console.log('Configurações salvas:', responseData);
+                    } else {
+                        Toastify({ text: "Erro ao salvar configurações: " + (responseData.message || 'Erro desconhecido.'), duration: 3000, style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" } }).showToast();
+                        console.error('Erro do servidor:', responseData);
+                    }
+                } catch (error) {
+                    console.error('Erro na requisição para salvar configurações:', error);
+                    Toastify({ text: "Erro ao conectar com o servidor.", duration: 3000, style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" } }).showToast();
+                }
+            });
+        }
+    };
+</script>

@@ -1,0 +1,299 @@
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-semibold mb-4 text-gray-800">Lista de Equipamentos</h2>
+    <p class="text-gray-600">Aqui você pode gerenciar todos os equipamentos da sua empresa.</p>
+
+    <div class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <h3 class="text-xl font-semibold mb-3 text-gray-700">Adicionar Novo Equipamento</h3>
+        <form id="novo-equipamento-form">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="novo_equipamento_nome" class="block text-gray-700 text-sm font-bold mb-2">Nome:</label>
+                    <input type="text" id="novo_equipamento_nome" name="nome" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Nome do equipamento" required>
+                </div>
+                <div>
+                    <label for="novo_equipamento_setor" class="block text-gray-700 text-sm font-bold mb-2">Setor:</label>
+                    <select id="novo_equipamento_setor" name="setor" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="">Selecione um setor</option>
+                        <option value="Produção">Produção</option>
+                        <option value="Manutenção">Manutenção</option>
+                        <option value="Administrativo">Administrativo</option>
+                        <option value="Qualidade">Qualidade</option>
+                        <option value="Logística">Logística</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label for="novo_equipamento_status" class="block text-gray-700 text-sm font-bold mb-2">Status:</label>
+                    <select id="novo_equipamento_status" name="status" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        <option value="Ativo">Ativo</option>
+                        <option value="Em Manutenção">Em Manutenção</option>
+                        <option value="Inativo">Inativo</option>
+                    </select>
+                </div>
+                </div>
+            <div class="flex items-center justify-end">
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Adicionar Equipamento
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="mt-6 overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Setor</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                </tr>
+            </thead>
+            <tbody id="equipamentos-list-body" class="bg-white divide-y divide-gray-200">
+                <tr>
+                    <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">Carregando equipamentos...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="equipmentDetailsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-lg shadow-xl w-11/12 md:w-3/4 lg:w-1/2 p-6 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center border-b pb-3 mb-4">
+            <h3 class="text-xl font-semibold text-gray-800">Detalhes do Equipamento: <span id="modalEquipmentName"></span></h3>
+            <button id="closeModalButton" class="text-gray-500 hover:text-gray-800 text-2xl font-bold">&times;</button>
+        </div>
+        <div id="modalEquipmentDetails" class="mb-6 space-y-2">
+            <p><strong class="font-medium">ID:</strong> <span id="detailId"></span></p>
+            <p><strong class="font-medium">Nome:</strong> <span id="detailNome"></span></p>
+            <p><strong class="font-medium">Setor:</strong> <span id="detailSetor"></span></p>
+            <p><strong class="font-medium">Status:</strong> <span id="detailStatus"></span></p>
+            <p><strong class="font-medium">Data de Cadastro:</strong> <span id="detailDataCadastro"></span></p>
+        </div>
+
+        <h4 class="text-lg font-semibold mb-3 text-gray-800">Histórico de Manutenções</h4>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descrição</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="maintenanceHistoryBody" class="bg-white divide-y divide-gray-200">
+                    <tr>
+                        <td colspan="4" class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 text-center">Carregando histórico...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <button id="closeModalButtonBottom" class="mt-6 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            Fechar
+        </button>
+    </div>
+</div>
+
+
+<script data-equipamentos-logic="true">
+    window.initializeEquipamentosPage = async function() {
+        console.log('initializeEquipamentosPage: Função de inicialização executada.');
+
+        const equipamentosListBody = document.getElementById('equipamentos-list-body');
+        const novoEquipamentoForm = document.getElementById('novo-equipamento-form');
+
+        const equipmentDetailsModal = document.getElementById('equipmentDetailsModal');
+        const closeModalButton = document.getElementById('closeModalButton');
+        const closeModalButtonBottom = document.getElementById('closeModalButtonBottom');
+        const modalEquipmentName = document.getElementById('modalEquipmentName');
+        const detailId = document.getElementById('detailId');
+        const detailNome = document.getElementById('detailNome');
+        const detailSetor = document.getElementById('detailSetor');
+        const detailStatus = document.getElementById('detailStatus');
+        const detailDataCadastro = document.getElementById('detailDataCadastro');
+        const maintenanceHistoryBody = document.getElementById('maintenanceHistoryBody');
+
+        async function loadEquipamentos() {
+            // ... (código da função sem alteração)
+            console.log('loadEquipamentos: Iniciando carregamento...');
+            if (!equipamentosListBody) {
+                console.error('Elemento #equipamentos-list-body não encontrado.');
+                return;
+            }
+            equipamentosListBody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">Carregando equipamentos...</td></tr>`;
+            try {
+                const response = await fetch('http://localhost:3000/api/equipamentos');
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                const equipamentos = await response.json();
+                equipamentosListBody.innerHTML = ''; 
+                if (equipamentos.length > 0) {
+                    equipamentos.forEach(equipamento => {
+                        const dataCadastro = equipamento.data_cadastro ? new Date(equipamento.data_cadastro).toLocaleDateString('pt-BR') : 'N/A';
+                        const row = `
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${equipamento.id}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">${equipamento.nome}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">${equipamento.setor || 'N/A'}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="status-badge status-${equipamento.status.toLowerCase().replace(' ', '-')}"></span>${equipamento.status}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <a href="#" class="text-blue-600 hover:text-blue-900 mr-2 detalhes-equipamento" 
+                                       data-equipamento-id="${equipamento.id}"
+                                       data-equipamento-nome="${equipamento.nome}"
+                                       data-equipamento-setor="${equipamento.setor || 'N/A'}"
+                                       data-equipamento-status="${equipamento.status}"
+                                       data-equipamento-data-cadastro="${dataCadastro}">Detalhes</a>
+                                    <button class="text-red-600 hover:text-red-900 excluir-equipamento" data-equipamento-id="${equipamento.id}">Excluir</button>
+                                </td>
+                            </tr>
+                        `;
+                        equipamentosListBody.insertAdjacentHTML('beforeend', row);
+                    });
+
+                    document.querySelectorAll('.detalhes-equipamento').forEach(button => {
+                        button.addEventListener('click', async function(event) {
+                            event.preventDefault();
+                            const equipamentoId = this.dataset.equipamentoId;
+                            modalEquipmentName.textContent = this.dataset.equipamentoNome;
+                            detailId.textContent = equipamentoId;
+                            detailNome.textContent = this.dataset.equipamentoNome;
+                            detailSetor.textContent = this.dataset.equipamentoSetor;
+                            detailStatus.textContent = this.dataset.equipamentoStatus;
+                            detailDataCadastro.textContent = this.dataset.equipamentoDataCadastro;
+                            await loadMaintenanceHistory(equipamentoId);
+                            equipmentDetailsModal.classList.remove('hidden');
+                        });
+                    });
+
+                    document.querySelectorAll('.excluir-equipamento').forEach(button => {
+                        button.addEventListener('click', async function(event) {
+                            event.preventDefault();
+                            const equipamentoId = this.dataset.equipamentoId;
+                            if (confirm(`Tem certeza que deseja excluir o equipamento ID: ${equipamentoId}?`)) {
+                                try {
+                                    const response = await fetch(`http://localhost:3000/api/equipamentos/${equipamentoId}`, {
+                                        method: 'DELETE',
+                                    });
+
+                                    if (response.ok) {
+                                        Toastify({ text: "Equipamento excluído com sucesso!", style: { background: "linear-gradient(to right, #00b09b, #96c93d)" }}).showToast();
+                                        loadEquipamentos();
+                                    } else {
+                                        const errorData = await response.json();
+                                        Toastify({ text: 'Erro ao excluir equipamento: ' + (errorData.message || 'Erro desconhecido.'), style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" }}).showToast();
+                                        console.error('Erro ao excluir:', errorData);
+                                    }
+                                } catch (error) {
+                                    console.error('Erro na requisição de exclusão:', error);
+                                    Toastify({ text: "Erro ao conectar com o servidor.", style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" }}).showToast();
+                                }
+                            }
+                        });
+                    });
+
+                } else {
+                    equipamentosListBody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">Nenhum equipamento encontrado.</td></tr>`;
+                }
+            } catch (error) {
+                console.error('loadEquipamentos: Erro ao carregar equipamentos:', error);
+                equipamentosListBody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-red-500 text-center">Erro ao carregar equipamentos: ${error.message}.</td></tr>`;
+            }
+        }
+
+        async function loadMaintenanceHistory(equipmentId) {
+            // ... (código da função sem alteração)
+            maintenanceHistoryBody.innerHTML = `<tr><td colspan="4" class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 text-center">Carregando histórico...</td></tr>`;
+            try {
+                const response = await fetch(`http://localhost:3000/api/equipamentos/${equipmentId}/historico-manutencoes`);
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                const history = await response.json();
+                maintenanceHistoryBody.innerHTML = '';
+                if (history.length > 0) {
+                    history.forEach(item => {
+                        const dataManutencao = new Date(item.data_abertura).toLocaleDateString('pt-BR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+                        const row = `
+                            <tr>
+                                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-800">${dataManutencao}</td>
+                                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-800">${item.tipo_problema}</td>
+                                <td class="px-4 py-2 text-sm text-gray-800">${item.descricao}</td>
+                                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-800">${item.status}</td>
+                            </tr>
+                        `;
+                        maintenanceHistoryBody.insertAdjacentHTML('beforeend', row);
+                    });
+                } else {
+                    maintenanceHistoryBody.innerHTML = `<tr><td colspan="4" class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 text-center">Nenhuma manutenção encontrada para este equipamento.</td></tr>`;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar histórico de manutenções:', error);
+                maintenanceHistoryBody.innerHTML = `<tr><td colspan="4" class="px-4 py-2 whitespace-nowrap text-sm text-red-500 text-center">Erro ao carregar histórico: ${error.message}</td></tr>`;
+            }
+        }
+
+        if (closeModalButton) { closeModalButton.addEventListener('click', () => { equipmentDetailsModal.classList.add('hidden'); }); }
+        if (closeModalButtonBottom) { closeModalButtonBottom.addEventListener('click', () => { equipmentDetailsModal.classList.add('hidden'); }); }
+        if (equipmentDetailsModal) { equipmentDetailsModal.addEventListener('click', function(event) { if (event.target === equipmentDetailsModal) { equipmentDetailsModal.classList.add('hidden'); } }); }
+
+        if (novoEquipamentoForm) {
+            novoEquipamentoForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const newEquipmentData = {
+                    nome: document.getElementById('novo_equipamento_nome').value,
+                    setor: document.getElementById('novo_equipamento_setor').value,
+                    status: document.getElementById('novo_equipamento_status').value
+                };
+
+                try {
+                    const response = await fetch('http://localhost:3000/api/equipamentos', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(newEquipmentData)
+                    });
+                    const responseData = await response.json();
+
+                    if (response.ok) {
+                        // MELHORIA: Substituído alert por Toastify
+                        Toastify({ text: "Equipamento adicionado com sucesso! ID: " + responseData.id, duration: 3000, style: { background: "linear-gradient(to right, #00b09b, #96c93d)" } }).showToast();
+                        novoEquipamentoForm.reset();
+                        await loadEquipamentos();
+                    } else {
+                        Toastify({ text: 'Erro ao adicionar equipamento: ' + (responseData.message || 'Erro desconhecido.'), duration: 3000, style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" } }).showToast();
+                        console.error('Erro ao adicionar equipamento:', responseData);
+                    }
+                } catch (error) {
+                    console.error('Erro na requisição para adicionar equipamento:', error);
+                    Toastify({ text: 'Erro ao conectar com o servidor.', duration: 3000, style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" } }).showToast();
+                }
+            });
+        }
+
+        // Carrega os equipamentos ao inicializar
+        await loadEquipamentos();
+
+        // MELHORIA: Lógica para abrir modal via QR Code
+        const equipmentIdToOpen = sessionStorage.getItem('openEquipmentModalForId');
+        if (equipmentIdToOpen) {
+            sessionStorage.removeItem('openEquipmentModalForId'); // Limpa para não reabrir
+
+            const detailsButton = document.querySelector(`.detalhes-equipamento[data-equipamento-id='${equipmentIdToOpen}']`);
+            if (detailsButton) {
+                detailsButton.click(); // Abre o modal
+            } else {
+                Toastify({
+                    text: `Equipamento com ID ${equipmentIdToOpen} não foi encontrado na lista.`,
+                    duration: 4000,
+                    style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" }
+                }).showToast();
+            }
+        }
+    };
+</script>

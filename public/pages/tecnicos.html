@@ -1,0 +1,245 @@
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-semibold mb-4 text-gray-800">Gerenciamento de Técnicos</h2>
+    <p class="text-gray-600 mb-6">Cadastre, visualize, edite e remova os técnicos da sua equipe.</p>
+
+    <div class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <h3 class="text-xl font-semibold mb-3 text-gray-700">Adicionar Novo Técnico</h3>
+        <form id="novo-tecnico-form">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="novo_tecnico_nome" class="block text-gray-700 text-sm font-bold mb-2">Nome:</label>
+                    <input type="text" id="novo_tecnico_nome" name="nome" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Nome completo do técnico" required>
+                </div>
+                <div>
+                    <label for="novo_tecnico_especialidade" class="block text-gray-700 text-sm font-bold mb-2">Especialidade:</label>
+                    <select id="novo_tecnico_especialidade" name="especialidade" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="">Selecione uma especialidade</option>
+                        <option value="Eletricista">Eletricista</option>
+                        <option value="Mecânico">Mecânico</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label for="novo_tecnico_contato" class="block text-gray-700 text-sm font-bold mb-2">Contato (Telefone/Email):</label>
+                    <input type="text" id="novo_tecnico_contato" name="contato" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Telefone ou e-mail de contato">
+                </div>
+                <div>
+                    <label for="novo_tecnico_status" class="block text-gray-700 text-sm font-bold mb-2">Status:</label>
+                    <select id="novo_tecnico_status" name="status" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="Ativo">Ativo</option>
+                        <option value="Inativo">Inativo</option>
+                        <option value="Férias">Férias</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex items-center justify-end">
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Adicionar Técnico
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="mt-6 overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Especialidade</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contato</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tecnicos-list-body" class="bg-white divide-y divide-gray-200">
+                <tr>
+                    <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">Carregando técnicos...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="tecnicoModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-lg shadow-xl w-11/12 md:w-3/4 lg:w-1/2 p-6 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center border-b pb-3 mb-4">
+            <h3 class="text-xl font-semibold text-gray-800">Detalhes do Técnico: <span id="modalTecnicoName"></span></h3>
+            <button id="closeTecnicoModalButton" class="text-gray-500 hover:text-gray-800 text-2xl font-bold">&times;</button>
+        </div>
+        <form id="edit-tecnico-form">
+            <input type="hidden" id="edit_tecnico_id">
+            <div class="mb-4">
+                <label for="edit_tecnico_nome" class="block text-gray-700 text-sm font-bold mb-2">Nome:</label>
+                <input type="text" id="edit_tecnico_nome" name="nome" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            <div class="mb-4">
+                <label for="edit_tecnico_especialidade" class="block text-gray-700 text-sm font-bold mb-2">Especialidade:</label>
+                <select id="edit_tecnico_especialidade" name="especialidade" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <option value="">Selecione uma especialidade</option>
+                    <option value="Eletricista">Eletricista</option>
+                    <option value="Mecânico">Mecânico</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="edit_tecnico_contato" class="block text-gray-700 text-sm font-bold mb-2">Contato:</label>
+                <input type="text" id="edit_tecnico_contato" name="contato" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <div class="mb-6">
+                <label for="edit_tecnico_status" class="block text-gray-700 text-sm font-bold mb-2">Status:</label>
+                <select id="edit_tecnico_status" name="status" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <option value="Ativo">Ativo</option>
+                    <option value="Inativo">Inativo</option>
+                    <option value="Férias">Férias</option>
+                </select>
+            </div>
+            <div class="flex items-center justify-end">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Salvar Alterações
+                </button>
+                <button type="button" id="cancelEditTecnicoButton" class="ml-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script data-tecnicos-logic="true">
+    window.initializeTecnicosPage = async function() {
+        console.log('Script tecnicos.html (initializeTecnicosPage) foi executado!');
+
+        const tecnicosListBody = document.getElementById('tecnicos-list-body');
+        const novoTecnicoForm = document.getElementById('novo-tecnico-form');
+
+        // Modal elements
+        const tecnicoModal = document.getElementById('tecnicoModal');
+        const closeModalTecnicoButton = document.getElementById('closeTecnicoModalButton');
+        const editTecnicoForm = document.getElementById('edit-tecnico-form');
+        const editTecnicoId = document.getElementById('edit_tecnico_id');
+        const modalTecnicoName = document.getElementById('modalTecnicoName');
+        const editTecnicoNome = document.getElementById('edit_tecnico_nome');
+        const editTecnicoEspecialidade = document.getElementById('edit_tecnico_especialidade');
+        const editTecnicoContato = document.getElementById('edit_tecnico_contato');
+        const editTecnicoStatus = document.getElementById('edit_tecnico_status');
+        const cancelEditTecnicoButton = document.getElementById('cancelEditTecnicoButton');
+
+        // Function to load and display technicians
+        async function loadTecnicos() {
+            // ... (código da função sem alteração) ...
+        }
+
+        // Function to open and populate the technician modal
+        async function openTecnicoModal(tecnicoId) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/tecnicos/${tecnicoId}`);
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                const tecnico = await response.json();
+
+                modalTecnicoName.textContent = tecnico.nome;
+                editTecnicoId.value = tecnico.id;
+                editTecnicoNome.value = tecnico.nome;
+                editTecnicoEspecialidade.value = tecnico.especialidade || '';
+                editTecnicoContato.value = tecnico.contato || '';
+                editTecnicoStatus.value = tecnico.status;
+
+                tecnicoModal.classList.remove('hidden');
+            } catch (error) {
+                console.error('Erro ao abrir modal de Técnico:', error);
+                Toastify({ text: "Não foi possível carregar os detalhes do técnico.", duration: 3000, style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" } }).showToast();
+            }
+        }
+
+        // Function to delete a technician
+        async function deleteTecnico(tecnicoId) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/tecnicos/${tecnicoId}`, {
+                    method: 'DELETE',
+                });
+
+                if (response.ok) {
+                    Toastify({ text: "Técnico excluído com sucesso!", duration: 3000, style: { background: "linear-gradient(to right, #00b09b, #96c93d)" } }).showToast();
+                    await loadTecnicos();
+                } else {
+                    const errorData = await response.json();
+                    Toastify({ text: "Erro ao excluir técnico: " + (errorData.message || 'Erro desconhecido.'), duration: 3000, style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" } }).showToast();
+                }
+            } catch (error) {
+                console.error('Erro na requisição de exclusão de técnico:', error);
+                Toastify({ text: "Erro ao conectar com o servidor para excluir técnico.", duration: 3000, style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" } }).showToast();
+            }
+        }
+
+        // Event listener for new technician form
+        if (novoTecnicoForm) {
+            novoTecnicoForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const newTecnicoData = {
+                    nome: document.getElementById('novo_tecnico_nome').value,
+                    especialidade: document.getElementById('novo_tecnico_especialidade').value,
+                    contato: document.getElementById('novo_tecnico_contato').value,
+                    status: document.getElementById('novo_tecnico_status').value
+                };
+
+                try {
+                    const response = await fetch('http://localhost:3000/api/tecnicos', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(newTecnicoData)
+                    });
+                    const responseData = await response.json();
+                    if (response.ok) {
+                        Toastify({ text: "Técnico adicionado com sucesso! ID: " + responseData.id, duration: 3000, style: { background: "linear-gradient(to right, #00b09b, #96c93d)" } }).showToast();
+                        novoTecnicoForm.reset();
+                        await loadTecnicos();
+                    } else {
+                        Toastify({ text: 'Erro ao adicionar técnico: ' + (responseData.message || 'Erro desconhecido.'), duration: 3000, style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" } }).showToast();
+                    }
+                } catch (error) {
+                    console.error('Erro na requisição para adicionar técnico:', error);
+                    Toastify({ text: "Erro ao conectar com o servidor para adicionar técnico.", duration: 3000, style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" } }).showToast();
+                }
+            });
+        }
+
+        // Event listener for edit technician form
+        if (editTecnicoForm) {
+            editTecnicoForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const tecnicoId = editTecnicoId.value;
+                const updatedTecnicoData = {
+                    nome: editTecnicoNome.value,
+                    especialidade: editTecnicoEspecialidade.value,
+                    contato: editTecnicoContato.value,
+                    status: editTecnicoStatus.value
+                };
+
+                try {
+                    const response = await fetch(`http://localhost:3000/api/tecnicos/${tecnicoId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(updatedTecnicoData)
+                    });
+                    const responseData = await response.json();
+                    if (response.ok) {
+                        Toastify({ text: "Técnico atualizado com sucesso!", duration: 3000, style: { background: "linear-gradient(to right, #00b09b, #96c93d)" } }).showToast();
+                        tecnicoModal.classList.add('hidden');
+                        await loadTecnicos();
+                    } else {
+                        Toastify({ text: "Erro ao atualizar técnico: " + (responseData.message || 'Erro desconhecido.'), duration: 3000, style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" } }).showToast();
+                    }
+                } catch (error) {
+                    console.error('Erro na requisição para atualizar técnico:', error);
+                    Toastify({ text: "Erro ao conectar com o servidor para atualizar técnico.", duration: 3000, style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" } }).showToast();
+                }
+            });
+        }
+
+        // Event listeners to close the modal
+        // ... (código sem alteração) ...
+    };
+</script>

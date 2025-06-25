@@ -1,0 +1,91 @@
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-semibold mb-4 text-gray-800">Leitor de QR Code</h2>
+    <p class="text-gray-600 mb-6">Use a câmera para escanear o QR Code de um equipamento e ver suas informações.</p>
+    <div class="flex flex-col items-center justify-center">
+        <div id="reader" class="w-full max-w-lg aspect-video"></div>
+        <p class="mt-4 text-lg font-semibold text-gray-700" id="qr-result">Aguardando leitura do QR Code...</p>
+        <button id="start-scanner" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            Iniciar Leitor
+        </button>
+        <button id="stop-scanner" class="mt-2 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hidden">
+            Parar Leitor
+        </button>
+    </div>
+</div>
+
+<script data-qr-logic="true">
+    window.initializeQrCodePage = async function() {
+        console.log('Script verificar-qrcode.html (initializeQrCodePage) foi executado!');
+
+        const qrResultDiv = document.getElementById('qr-result');
+        const startScannerBtn = document.getElementById('start-scanner');
+        const stopScannerBtn = document.getElementById('stop-scanner');
+        let html5QrCode;
+
+        // MELHORIA: A função agora navega para a página de equipamentos
+        function onScanSuccess(decodedText, decodedResult) {
+            console.log(`Código lido = ${decodedText}`);
+            qrResultDiv.textContent = `QR Code lido: ${decodedText}. Carregando detalhes...`;
+            
+            // Para o scanner para evitar múltiplas leituras
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop();
+            }
+
+            // 1. Guarda o ID do equipamento no sessionStorage.
+            sessionStorage.setItem('openEquipmentModalForId', decodedText);
+
+            // 2. Usa a função de navegação global para ir para a página de equipamentos.
+            window.loadContent('equipamentos'); 
+        }
+
+        function onScanFailure(error) {
+            // (Função sem alteração)
+        }
+
+        if (startScannerBtn) {
+            startScannerBtn.addEventListener('click', () => {
+                if (typeof Html5Qrcode === 'undefined') {
+                    qrResultDiv.textContent = 'Aguardando o carregamento da biblioteca QR Code...';
+                    return;
+                }
+                if (!html5QrCode) {
+                    html5QrCode = new Html5Qrcode("reader");
+                }
+                const readerDiv = document.getElementById('reader');
+                const readerWidth = readerDiv.offsetWidth;
+                const qrboxSize = Math.min(250, readerWidth * 0.7);
+
+                html5QrCode.start(
+                    { facingMode: "environment" },
+                    { fps: 10, qrbox: { width: qrboxSize, height: qrboxSize } },
+                    onScanSuccess,
+                    onScanFailure
+                ).then(() => {
+                    startScannerBtn.classList.add('hidden');
+                    stopScannerBtn.classList.remove('hidden');
+                    qrResultDiv.textContent = 'Leitor QR Code Iniciado. Aponte a câmera para um QR Code.';
+                }).catch(err => {
+                    qrResultDiv.textContent = `Erro ao iniciar câmera: ${err}`;
+                    console.error("Erro ao iniciar QR scanner:", err);
+                });
+            });
+        }
+
+        if (stopScannerBtn) {
+            stopScannerBtn.addEventListener('click', () => {
+                if (html5QrCode && html5QrCode.isScanning) {
+                    html5QrCode.stop().then(() => {
+                        console.log("Scanner QR Code parado.");
+                        startScannerBtn.classList.remove('hidden');
+                        stopScannerBtn.classList.add('hidden');
+                        qrResultDiv.textContent = 'Leitor parado.';
+                    }).catch(err => {
+                        console.error("Erro ao parar QR scanner:", err);
+                        qrResultDiv.textContent = `Erro ao parar leitor: ${err}`;
+                    });
+                }
+            });
+        }
+    };
+</script>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dashboard de Gestão de Manutenção para acompanhamento de equipamentos e atividades.">
+    <meta name="keywords" content="Gestão de Manutenção, Dashboard, Equipamentos, Manutenção Preventiva, Manutenção Corretiva">
+    <meta name="author" content="Leandro Fellipe, Vanderley Cardoso, Kauã Nogueira, Guilherme Borges">
+    <title>ServiceDesk - Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="flex h-screen overflow-hidden">
+
+        <aside class="sidebar bg-indigo-800 text-white w-64 space-y-6 py-7 px-2 fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-300 ease-in-out z-50">
+            <div class="flex items-center justify-between px-4">
+                <a href="#" class="flex items-center space-x-2 text-white" data-page="dashboard">
+                    <i class="fas fa-tools text-2xl logo-icon"></i>
+                    <span class="text-2xl font-semibold logo-text">ServiceDesk</span>
+                </a>
+                <button id="toggleSidebar" class="md:hidden text-white focus:outline-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <nav class="space-y-2 mt-8">
+                <p class="text-xs uppercase text-indigo-300 px-4 mb-2 sidebar-text">Menu Principal</p>
+                <a href="#" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 hover:text-white flex items-center space-x-2 active-nav-link" data-page="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span class="sidebar-text">Dashboard</span>
+                </a>
+                <a href="#" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 hover:text-white flex items-center space-x-2" data-page="equipamentos">
+                    <i class="fas fa-cogs"></i>
+                    <span class="sidebar-text">Equipamentos</span>
+                </a>
+                <a href="#" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 hover:text-white flex items-center space-x-2" data-page="ordens-servico">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span class="sidebar-text">Ordens de Serviço</span>
+                </a>               
+                <a href="#" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 hover:text-white flex items-center space-x-2" data-page="tecnicos">
+                    <i class="fas fa-users"></i>
+                    <span class="sidebar-text">Técnicos</span>
+                </a>
+                <hr class="border-indigo-700 my-4">
+                <p class="text-xs uppercase text-indigo-300 px-4 mb-2 sidebar-text">Administração</p>
+                <a href="#" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 hover:text-white flex items-center space-x-2" data-page="configuracoes">
+                    <i class="fas fa-cog"></i>
+                    <span class="sidebar-text">Configurações</span>
+                </a>
+                <a href="#" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 hover:text-white flex items-center space-x-2" data-page="relatorios">
+                    <i class="fas fa-file-alt"></i>
+                    <span class="sidebar-text">Relatórios</span>
+                </a>
+                <a href="#" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 hover:text-white flex items-center space-x-2" data-page="verificar-qrcode">
+                    <i class="fas fa-qrcode"></i>
+                    <span class="sidebar-text">Verificar QR Code</span>
+                </a>
+            </nav>
+
+            <div class="absolute bottom-0 left-0 w-full p-4 flex items-center space-x-3 border-t border-indigo-700">
+                <div class="w-10 h-10 bg-indigo-700 rounded-full flex items-center justify-center text-indigo-200">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="sidebar-text">
+                    <p class="font-medium text-sm">Admin User</p>
+                    <p class="text-xs text-indigo-300">administrador@empresa.com</p>
+                </div>
+            </div>
+        </aside>
+
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center z-40">
+                <h1 id="pageTitle" class="text-2xl font-semibold text-gray-800">Dashboard</h1>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="relative p-2 text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700">
+                            <i class="fas fa-bell text-xl"></i>
+                            <span class="notification-badge absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">3</span>
+                        </button>
+                    </div>
+
+                    <div class="relative">
+                        <button id="userMenuButton" class="flex items-center space-x-2 text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700">
+                            <img class="h-8 w-8 rounded-full object-cover" src="https://via.placeholder.com/150" alt="Avatar do Usuário">
+                            <span class="font-medium text-sm hidden md:block">Admin User</span>
+                            <i class="fas fa-chevron-down text-xs ml-1 hidden md:block"></i>
+                        </button>
+
+                        <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Perfil</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Configurações</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-t border-gray-100">Sair</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main id="contentArea" class="flex-1 overflow-y-auto p-6 bg-gray-100">
+                </main>
+        </div>
+    </div>
+
+    <script src="codigo.js"></script>
+</body>
+</html>
