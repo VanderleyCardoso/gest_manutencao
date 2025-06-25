@@ -1,0 +1,98 @@
+O que é Necessário para rodar em outra Máquina"
+1 - Node.js e npm(Na outra máquina, você precisará instalar o Node.js e o npm.)
+2 - MySQL Server:(Na outra máquina, você precisará instalar o MySQL Server e criar o banco de dados gest_manutencao com as tabelas, assim como você fez no seu computador atual.
+)
+O Código Completo do Seu Projeto:
+Passo 1: Preparar a Nova Máquina
+
+Instalar Node.js e npm:
+Baixe e instale a versão LTS do Node.js em nodejs.org na nova máquina. Isso também instalará o npm.
+Instalar MySQL Server:
+Baixe e instale o MySQL Community Server em [link suspeito removido] na nova máquina.
+Durante a instalação, defina uma senha para o usuário root do MySQL. Anote essa senha, pois você precisará dela.
+Passo 2: Copiar o Código do Seu Projeto
+
+Copie a pasta inteira nova-app-manutencao (ou como você a chamou) do seu computador atual para a nova máquina.
+Coloque-a em um local fácil de encontrar (ex: C:\Users\SeuUsuario\Projetos\nova-app-manutencao no Windows, ou /home/seuusuario/projetos/nova-app-manutencao no Linux).
+Passo 3: Configurar o Banco de Dados na Nova Máquina
+
+Na nova máquina, abra seu cliente MySQL (MySQL Workbench, DBeaver ou terminal mysql).
+
+Conecte-se ao MySQL como root usando a senha que você definiu para o MySQL desta nova máquina.
+
+Execute os mesmos comandos SQL que você usou para criar o banco de dados e as tabelas:
+
+SQL
+
+CREATE DATABASE IF NOT EXISTS gest_manutencao;
+USE gest_manutencao;
+
+-- Comandos CREATE TABLE para equipamentos, chamados, ordens_servico (cole todos eles aqui)
+-- Comandos INSERT para dados de exemplo (cole eles aqui)
+(Você pode pegar esses comandos no meu histórico de conversa ou no seu cliente MySQL, se você salvou o script).
+
+Passo 4: Configurar e Instalar Dependências no Backend da Nova Máquina
+
+Na nova máquina, abra o terminal/prompt de comando.
+Navegue até a pasta backend do seu projeto copiado:
+Bash
+
+cd C:\caminho\para\nova-app-manutencao\backend
+(Ajuste o C:\caminho\para para o local real onde você colou a pasta).
+Ajuste a senha do MySQL no server.js:
+Abra o arquivo server.js (que está dentro de nova-app-manutencao/backend/).
+Localize a linha password: 'SUA_SENHA_DO_ROOT_MYSQL', na configuração dbConfig.
+Substitua SUA_SENHA_DO_ROOT_MYSQL pela senha do usuário root do MySQL desta nova máquina. Salve o arquivo.
+Instale as dependências do Node.js:
+Ainda no terminal, dentro da pasta backend, digite:
+Bash
+
+npm install
+Isso vai ler o package.json e instalar todas as bibliotecas necessárias para o seu backend.
+Passo 5: Iniciar a Aplicação na Nova Máquina
+
+Ainda no terminal, dentro da pasta backend, digite:
+Bash
+
+node server.js
+Você deverá ver as mensagens de sucesso de conexão com o MySQL e de que o servidor Express está a correr.
+Abra o navegador na nova máquina e acesse: http://localhost:3000/Index.html
+Considerações Importantes para "Qualquer Máquina" (Ambientes Reais):
+Dados do Banco de Dados: Se você tem dados importantes no seu MySQL original e quer que eles apareçam na nova máquina, você precisará exportar os dados do seu banco de dados atual (gest_manutencao) e importá-los para o banco de dados gest_manutencao na nova máquina.
+No MySQL Workbench, isso é feito através de "Data Export" e "Data Import".
+Via terminal, você pode usar mysqldump para exportar e o comando mysql para importar.
+Variáveis de Ambiente: Em projetos reais (não apenas localmente no seu computador), é uma prática muito melhor não colocar a senha do banco de dados diretamente no server.js. Em vez disso, você usaria variáveis de ambiente (ex: process.env.DB_PASSWORD) e configuraria essas variáveis na máquina onde o código será executado. Isso é mais seguro.
+Domínios e Portas: localhost:3000 funciona porque você está na mesma máquina. Se você quiser que outras pessoas acedam de outras máquinas na mesma rede, talvez precise usar o IP da máquina. Se for um servidor na internet, você precisaria de um domínio e configurar portas no firewall.
+Plataformas de Hospedagem (Deployment): Para que outras pessoas no mundo acedam, você normalmente usaria serviços de hospedagem na nuvem (como Heroku, DigitalOcean, AWS, Google Cloud, Azure) que facilitam muito esses passos de configuração e gestão de ambiente.
+
+------- Acessar de Outra Máquina na MESMA Rede Local-----
+Se o servidor está a correr na "Máquina A" e você quer aceder da "Máquina B" (ambas conectadas à mesma rede Wi-Fi ou cabo de rede, por exemplo), você precisará do endereço IP da Máquina A.
+
+Descubra o Endereço IP da Máquina A (Onde o Servidor Está a Correr):
+
+No Windows (Máquina A):
+
+Abra o Prompt de Comando (CMD) ou PowerShell.
+Digite ipconfig e pressione Enter.
+Procure por "Endereço IPv4" (IPv4 Address) na seção do adaptador de rede que você está a usar (ex: "Adaptador Ethernet" ou "Adaptador de LAN sem Fio"). O endereço geralmente se parece com 192.168.1.X ou 10.0.0.X.
+Abra o navegador na Máquina B (Onde você quer acessar):
+
+Digite o endereço usando o IP da Máquina A:
+
+Substitua localhost pelo endereço IP que você encontrou.
+Exemplo, se o IP da Máquina A for 192.168.1.100:
+http://192.168.1.100:3000/Index.html
+Pressione Enter.
+Problemas Comuns para Acesso na Rede Local:
+
+Firewall: O firewall da Máquina A pode estar a bloquear conexões na porta 3000. Você precisaria adicionar uma regra no firewall da Máquina A para permitir conexões de entrada na porta 3000.
+No Windows: Pesquise por "Firewall do Windows com Segurança Avançada", vá em "Regras de Entrada" (Inbound Rules), e crie uma nova regra para permitir conexões TCP na porta 3000.
+Rede Isolada: Algumas redes (especialmente redes públicas ou de empresas) podem isolar dispositivos, impedindo que eles se vejam.
+Cenário 3: Acessar de uma Máquina Remota (Internet) - Mais Complexo
+Se você quer que a sua aplicação seja acessível de qualquer lugar do mundo pela internet, isso é chamado de deploy e é significativamente mais complexo. Envolve:
+
+Ter um IP público fixo ou um nome de domínio.
+Configurar redirecionamento de portas no seu router.
+Configurar firewalls no servidor e na rede.
+Considerar segurança (HTTPS, autenticação).
+Geralmente, usa-se plataformas de hospedagem (como Heroku, Vercel, Render, AWS, Google Cloud, DigitalOcean) para facilitar todo esse processo.

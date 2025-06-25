@@ -1,0 +1,7 @@
+No Dashboard criar guia de manutenções pendentes com os problemas descritos com um botão "Aceitar" para o técnico.
+
+Adicionar timer de 30 minutos até que o técnico aceite e adicionar um contador de tempo de resolução do problema no equipamento, Obs: Quem deve finalizar o chamado deve ser o técnico encarregado para a resoluçao do problema.
+
+Adicionar mecanismo de notificação a cada 10 minutos de quando não aceito o chamado.
+
+Adicionar mecanismo de notificação a cada 10 minutos a partir de aceito o chamado.

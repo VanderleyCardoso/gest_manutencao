@@ -1,0 +1,6 @@
+Na área de ordem de serviço adicionar nível de prioridade.
+
+Mudar o dropdown dos status para nivel de prioridade se é alta media ou baixa prioridade. 
+
+Mudar o Técnico atribuído para o tipo de problema se é mecanico, Elétrico ou etc... 
+

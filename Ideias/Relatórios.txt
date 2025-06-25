@@ -1,0 +1,7 @@
+Adicionar gerador de relatório de histórico de manutenção da máquina
+
+----------------------------------------------------------
+
+Quando técnico encerrar chamado automaticamente já gerar relatório através das informações dadas pelo técnico. 
+
+como horario de inicio e horario de termino, colocar informações de como que foi resolvido o problema da maquina

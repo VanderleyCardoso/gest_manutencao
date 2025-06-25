@@ -1,0 +1,3 @@
+Em equipamento quando cadastrar um euqipamento geraria um qrcode pra acessar ou emprimir . 
+
+com isso poderia acessar o QRcode ou emprimir para colocar em maquinas.

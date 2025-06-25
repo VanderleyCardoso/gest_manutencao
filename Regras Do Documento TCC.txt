@@ -1,0 +1,57 @@
+===============Planeje seu tempo===============
+Divida o trabalho em partes por semana ou mês:
+
+Semana 1: Escolher tema e objetivos
+
+Semana 2: Fazer introdução e justificativa
+
+Semana 3: Escrever fundamentação
+
+Semana 4–6: Desenvolver o projeto
+
+Semana 7: Escrever desenvolvimento e resultados
+
+Semana 8: Revisar e concluir
+
+===============Monte uma estrutura básica===============
+
+
+Aqui vai um exemplo simples de estrutura para um TCC técnico:
+===============
+1 Capa
+===============
+2 Resumo
+===============
+3 Introdução
+===============
+
+=> Apresentação do tema
+
+=> Justificativa
+
+=> Objetivos (geral e específicos)
+
+===============
+4 Fundamentação Teórica
+===============
+=> Explicação das tecnologias usadas
+
+===============
+5 Desenvolvimento / Metodologia
+===============
+=> Explicação de como o sistema foi feito
+=> Ferramentas utilizadas
+
+===============
+6 Resultados
+===============
+=> Prints do sistema ou testes feitos
+
+===============
+7 Conclusão
+===============
+=> O que foi aprendido, dificuldades, melhorias futuras
+
+===============
+8 Referências
+===============

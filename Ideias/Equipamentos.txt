@@ -1,0 +1,6 @@
+Na área de equipamentos adicionar operador corrrespondente á máquina e turno de cada um.
+
+    Exemplo: OPERADOR
+	GABRIEL/JULIO/ARTUR
+
+        MANHÃ/TARDE/NOITE
